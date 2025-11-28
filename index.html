@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dinosaurios Épicos — Página Animada</title>
+    <style>
+      :root {
+        --bg1: #0f1724;
+        --bg2: #071029;
+        --accent: #ffb703;
+        --muted: #9fb4c9;
+        --card: #0b1120;
+        --glass: rgba(255, 255, 255, 0.04);
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        color: #e6eef6;
+        background: linear-gradient(180deg, var(--bg1), var(--bg2));
+        overflow-x: hidden;
+      }
+      .stage {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Starfield */
+      .stars,
+      .meteor {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .stars:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(
+            circle at 10% 20%,
+            rgba(255, 255, 255, 0.9) 0.5px,
+            transparent 0.6px
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(255, 255, 255, 0.7) 0.6px,
+            transparent 0.7px
+          ),
+          radial-gradient(
+            circle at 70% 40%,
+            rgba(255, 255, 255, 0.6) 0.5px,
+            transparent 0.7px
+          );
+        background-size: 1200px 1200px, 900px 900px, 1500px 1500px;
+        opacity: 0.55;
+        mix-blend-mode: screen;
+        animation: twinkle 6s linear infinite;
+      }
+      @keyframes twinkle {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* Meteor */
+      .meteor svg {
+        position: absolute;
+        right: -20%;
+        top: 10%;
+        width: 120px;
+        filter: blur(0.6px);
+        animation: shoot 4s linear infinite;
+      }
+      @keyframes shoot {
+        0% {
+          transform: translateX(0) rotate(-20deg) translateY(0);
+          opacity: 0;
+        }
+        5% {
+          opacity: 1;
+        }
+        50% {
+          transform: translateX(-130vw) rotate(-20deg) translateY(40vh);
+          opacity: 0;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      header {
+        padding: 28px 36px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .logo .mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), #ff7733);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #102027;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      p.lead {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* Hero */
+      .hero {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 20px;
+      }
+      .ground {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 260px;
+        background: linear-gradient(180deg, #06202b, #0b1b17);
+        clip-path: polygon(
+          0 30%,
+          10% 20%,
+          20% 30%,
+          30% 25%,
+          40% 30%,
+          50% 18%,
+          60% 30%,
+          70% 24%,
+          80% 30%,
+          90% 20%,
+          100% 30%,
+          100% 100%,
+          0 100%
+        );
+        box-shadow: inset 0 12px 40px rgba(0, 0, 0, 0.6);
+      }
+      .hills {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 220px;
+        height: 160px;
+        background: linear-gradient(180deg, #083045, #052033);
+        filter: blur(10px);
+        opacity: 0.6;
+      }
+
+      /* Dinosaurios (SVG wrappers) */
+      .dinos {
+        position: relative;
+        display: flex;
+        gap: 40px;
+        align-items: flex-end;
+        z-index: 5;
+      }
+      .dino {
+        width: 320px;
+        height: 220px;
+        position: relative;
+      }
+
+      /* T-Rex caminando */
+      .trex {
+        animation: walk 8s linear infinite;
+        transform-origin: center bottom;
+      }
+      @keyframes walk {
+        0% {
+          transform: translateX(-30vw);
+        }
+        50% {
+          transform: translateX(30vw);
+        }
+        100% {
+          transform: translateX(-30vw);
+        }
+      }
+      .trex .leg {
+        transform-origin: 28px 80px;
+        animation: leg 0.6s steps(2) infinite;
+      }
+      .trex .leg.right {
+        animation-delay: 0.3s;
+      }
+      @keyframes leg {
+        0% {
+          transform: rotate(12deg);
+        }
+        50% {
+          transform: rotate(-18deg);
+        }
+        100% {
+          transform: rotate(12deg);
+        }
+      }
+
+      /* Pterodáctilo volando */
+      .ptero {
+        position: absolute;
+        left: 5%;
+        top: 4%;
+        width: 180px;
+        animation: fly 10s linear infinite;
+      }
+      @keyframes fly {
+        0% {
+          transform: translateY(0) translateX(-10vw) rotate(-10deg);
+        }
+        25% {
+          transform: translateY(-30px) translateX(10vw) rotate(0deg);
+        }
+        50% {
+          transform: translateY(0) translateX(40vw) rotate(10deg);
+        }
+        75% {
+          transform: translateY(-20px) translateX(10vw) rotate(0deg);
+        }
+        100% {
+          transform: translateY(0) translateX(-10vw) rotate(-10deg);
+        }
+      }
+
+      /* Cards */
+      .panel {
+        position: absolute;
+        right: 36px;
+        top: 90px;
+        width: 360px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.02)
+        );
+        border-radius: 12px;
+        padding: 18px;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      }
+      .panel h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+      .facts {
+        display: grid;
+        gap: 10px;
+      }
+      .fact {
+        background: var(--glass);
+        padding: 10px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: transform 0.25s ease, box-shadow 0.25s;
+      }
+      .fact:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 24px rgba(2, 6, 23, 0.4);
+      }
+      .fact .emoji {
+        font-size: 22px;
+      }
+
+      footer {
+        position: absolute;
+        left: 18px;
+        bottom: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* Info modal bubble */
+      .bubble {
+        position: absolute;
+        left: 50%;
+        top: 24px;
+        transform: translateX(-50%);
+        background: linear-gradient(180deg, #0b2230, #06121a);
+        padding: 14px;
+        border-radius: 10px;
+        color: #bde3ff;
+        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.7);
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .bubble small {
+        color: var(--muted);
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .panel {
+          position: static;
+          width: auto;
+          margin: 16px;
+          border-radius: 10px;
+        }
+        .dinos {
+          gap: 18px;
+        }
+        .hero {
+          padding-bottom: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="stars"></div>
+      <div class="meteor">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M3 3l10 10"
+            stroke="#ffd47a"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <path
+            d="M20 4L10 14"
+            stroke="#ffb703"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
+
+      <header>
+        <div class="logo">
+          <div class="mark">D</div>
+          <div>
+            <h1>Dinosaurios Épicos</h1>
+            <p class="lead">Animaciones CSS & SVG — interactiva y chula</p>
+          </div>
+        </div>
+        <div style="flex: 1"></div>
+        <nav style="display: flex; gap: 8px; align-items: center">
+          <button
+            id="toggleDay"
+            style="
+              background: transparent;
+              border: 1px solid rgba(255, 255, 255, 0.06);
+              color: var(--muted);
+              padding: 8px 12px;
+              border-radius: 8px;
+              cursor: pointer;
+            "
+          >
+            Cambiar tema
+          </button>
+        </nav>
+      </header>
+
+      <main class="hero">
+        <div class="ptero" aria-hidden>
+          <svg
+            viewBox="0 0 200 120"
+            width="100%"
+            height="100%"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g fill="#c2e6ff" stroke="#0b394d">
+              <path
+                d="M10 60 Q50 10 90 60 T170 60 Q140 40 115 60 T10 60"
+                opacity="0.95"
+              />
+              <circle cx="80" cy="50" r="6" fill="#09202a" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="dinos">
+          <div class="dino trex" title="T-Rex">
+            <svg
+              viewBox="0 0 220 140"
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stop-color="#64b6ff" />
+                  <stop offset="1" stop-color="#0b7fb0" />
+                </linearGradient>
+              </defs>
+              <g transform="translate(10,10)">
+                <ellipse
+                  cx="70"
+                  cy="70"
+                  rx="50"
+                  ry="40"
+                  fill="url(#g1)"
+                  stroke="#062b3a"
+                  stroke-width="3"
+                />
+                <circle cx="20" cy="55" r="12" fill="#0b394d" />
+                <rect
+                  x="100"
+                  y="48"
+                  width="40"
+                  height="18"
+                  rx="8"
+                  fill="#0b394d"
+                  transform="rotate(-15 120 57)"
+                />
+                <g class="leg left">
+                  <rect
+                    x="40"
+                    y="95"
+                    width="14"
+                    height="28"
+                    rx="6"
+                    fill="#06303a"
+                  />
+                </g>
+                <g class="leg right">
+                  <rect
+                    x="72"
+                    y="95"
+                    width="14"
+                    height="28"
+                    rx="6"
+                    fill="#06303a"
+                  />
+                </g>
+                <path
+                  d="M40 60 Q60 40 90 50"
+                  stroke="#082b34"
+                  stroke-width="4"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+                <circle cx="100" cy="38" r="6" fill="#081f24" />
+              </g>
+            </svg>
+          </div>
+
+          <div class="dino" title="Triceratops">
+            <svg
+              viewBox="0 0 220 140"
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g transform="translate(10,10)">
+                <ellipse
+                  cx="70"
+                  cy="70"
+                  rx="60"
+                  ry="40"
+                  fill="#ffd6a5"
+                  stroke="#7a3f22"
+                  stroke-width="3"
+                />
+                <circle cx="120" cy="60" r="16" fill="#7a3f22" />
+                <path
+                  d="M30 60 Q60 30 90 60"
+                  fill="#ffd6a5"
+                  stroke="#7a3f22"
+                  stroke-width="3"
+                />
+                <rect
+                  x="50"
+                  y="95"
+                  width="14"
+                  height="28"
+                  rx="6"
+                  fill="#7a3f22"
+                />
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="ground"></div>
+        <div class="hills"></div>
+
+        <aside class="panel">
+          <h2>Explora los dinosaurios</h2>
+          <div class="facts">
+            <div class="fact" onclick="showFact('trex')">
+              <div class="emoji">🦖</div>
+              <div>
+                <strong>T-Rex</strong>
+                <div style="font-size: 12px; color: var(--muted)">
+                  El rey de los depredadores
+                </div>
+              </div>
+            </div>
+            <div class="fact" onclick="showFact('trice')">
+              <div class="emoji">🦕</div>
+              <div>
+                <strong>Triceratops</strong>
+                <div style="font-size: 12px; color: var(--muted)">
+                  Fuerte con cuernos
+                </div>
+              </div>
+            </div>
+            <div class="fact" onclick="showFact('ptero')">
+              <div class="emoji">🪽</div>
+              <div>
+                <strong>Pterodáctilo</strong>
+                <div style="font-size: 12px; color: var(--muted)">
+                  Volador antiguo
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="bubble" id="bubble" style="display: none">
+          <div id="bubbleEmoji" style="font-size: 24px">🦖</div>
+          <div>
+            <strong id="bubbleTitle">T-Rex</strong><br /><small id="bubbleText"
+              >El T-Rex era un carnívoro formidable.</small
+            >
+          </div>
+        </div>
+
+        <footer>
+          Click en una tarjeta para ver un dato — Hecho con HTML, CSS y SVG
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      const bubble = document.getElementById("bubble");
+      const bubbleEmoji = document.getElementById("bubbleEmoji");
+      const bubbleTitle = document.getElementById("bubbleTitle");
+      const bubbleText = document.getElementById("bubbleText");
+
+      function showFact(id) {
+        if (id === "trex") {
+          bubbleEmoji.textContent = "🦖";
+          bubbleTitle.textContent = "Tyrannosaurus Rex";
+          bubbleText.textContent =
+            "Un depredador bípedo que vivió hace ~68-66 millones de años.";
+        } else if (id === "trice") {
+          bubbleEmoji.textContent = "🦕";
+          bubbleTitle.textContent = "Triceratops";
+          bubbleText.textContent =
+            "Herbívoro con un gran volante óseo y tres cuernos impresionantes.";
+        } else {
+          bubbleEmoji.textContent = "🪽";
+          bubbleTitle.textContent = "Pterodáctilo";
+          bubbleText.textContent =
+            "No son dinosaurios estrictamente, pero voladores icónicos del Mesozoico.";
+        }
+        bubble.style.display = "flex";
+        bubble.style.animation = "pop .45s ease forwards";
+        setTimeout(() => (bubble.style.display = "none"), 4000);
+      }
+
+      // small pop animation added dynamically
+      const s = document.createElement("style");
+      s.innerHTML =
+        "@keyframes pop{0%{transform:translateY(-10px) scale(.98);opacity:0}60%{transform:translateY(0) scale(1.02);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}";
+      document.head.appendChild(s);
+
+      // Theme toggle
+      const toggle = document.getElementById("toggleDay");
+      toggle.addEventListener("click", () => {
+        document.documentElement.style.setProperty(
+          "--bg1",
+          document.documentElement.style.getPropertyValue("--bg1") === "#f7f9fc"
+            ? "#0f1724"
+            : "#f7f9fc"
+        );
+        document.documentElement.style.setProperty(
+          "--bg2",
+          document.documentElement.style.getPropertyValue("--bg2") === "#ffffff"
+            ? "#071029"
+            : "#ffffff"
+        );
+        document.documentElement.style.setProperty(
+          "--muted",
+          document.documentElement.style.getPropertyValue("--muted") ===
+            "#1f2937"
+            ? "#9fb4c9"
+            : "#1f2937"
+        );
+      });
+
+      // Make sure animations are smooth when tab hidden/visible
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          document.body.style.animationPlayState = "paused";
+        } else {
+          document.body.style.animationPlayState = "running";
+        }
+      });
+    </script>
+  </body>
+</html>
