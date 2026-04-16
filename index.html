@@ -1,624 +1,442 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Dinosaurios Épicos — Página Animada</title>
+    <meta charset="UTF-8" />
+    <title>Examen Completo</title>
     <style>
-      :root {
-        --bg1: #0f1724;
-        --bg2: #071029;
-        --accent: #ffb703;
-        --muted: #9fb4c9;
-        --card: #0b1120;
-        --glass: rgba(255, 255, 255, 0.04);
-      }
-      html,
       body {
-        height: 100%;
-        margin: 0;
-        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial;
-        color: #e6eef6;
-        background: linear-gradient(180deg, var(--bg1), var(--bg2));
-        overflow-x: hidden;
+        font-family: Arial;
+        background: #f5f5f5;
+        margin: 20px;
       }
-      .stage {
-        position: relative;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Starfield */
-      .stars,
-      .meteor {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-      }
-      .stars:after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image: radial-gradient(
-            circle at 10% 20%,
-            rgba(255, 255, 255, 0.9) 0.5px,
-            transparent 0.6px
-          ),
-          radial-gradient(
-            circle at 40% 80%,
-            rgba(255, 255, 255, 0.7) 0.6px,
-            transparent 0.7px
-          ),
-          radial-gradient(
-            circle at 70% 40%,
-            rgba(255, 255, 255, 0.6) 0.5px,
-            transparent 0.7px
-          );
-        background-size: 1200px 1200px, 900px 900px, 1500px 1500px;
-        opacity: 0.55;
-        mix-blend-mode: screen;
-        animation: twinkle 6s linear infinite;
-      }
-      @keyframes twinkle {
-        0% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-        100% {
-          transform: translateY(0);
-        }
-      }
-
-      /* Meteor */
-      .meteor svg {
-        position: absolute;
-        right: -20%;
-        top: 10%;
-        width: 120px;
-        filter: blur(0.6px);
-        animation: shoot 4s linear infinite;
-      }
-      @keyframes shoot {
-        0% {
-          transform: translateX(0) rotate(-20deg) translateY(0);
-          opacity: 0;
-        }
-        5% {
-          opacity: 1;
-        }
-        50% {
-          transform: translateX(-130vw) rotate(-20deg) translateY(40vh);
-          opacity: 0;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-
-      header {
-        padding: 28px 36px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-      }
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-      .logo .mark {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--accent), #ff7733);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        color: #102027;
-      }
-      h1 {
-        margin: 0;
-        font-size: 20px;
-      }
-      p.lead {
-        margin: 4px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      /* Hero */
-      .hero {
-        flex: 1;
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        padding: 20px;
-      }
-      .ground {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 260px;
-        background: linear-gradient(180deg, #06202b, #0b1b17);
-        clip-path: polygon(
-          0 30%,
-          10% 20%,
-          20% 30%,
-          30% 25%,
-          40% 30%,
-          50% 18%,
-          60% 30%,
-          70% 24%,
-          80% 30%,
-          90% 20%,
-          100% 30%,
-          100% 100%,
-          0 100%
-        );
-        box-shadow: inset 0 12px 40px rgba(0, 0, 0, 0.6);
-      }
-      .hills {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 220px;
-        height: 160px;
-        background: linear-gradient(180deg, #083045, #052033);
-        filter: blur(10px);
-        opacity: 0.6;
-      }
-
-      /* Dinosaurios (SVG wrappers) */
-      .dinos {
-        position: relative;
-        display: flex;
-        gap: 40px;
-        align-items: flex-end;
-        z-index: 5;
-      }
-      .dino {
-        width: 320px;
-        height: 220px;
-        position: relative;
-      }
-
-      /* T-Rex caminando */
-      .trex {
-        animation: walk 8s linear infinite;
-        transform-origin: center bottom;
-      }
-      @keyframes walk {
-        0% {
-          transform: translateX(-30vw);
-        }
-        50% {
-          transform: translateX(30vw);
-        }
-        100% {
-          transform: translateX(-30vw);
-        }
-      }
-      .trex .leg {
-        transform-origin: 28px 80px;
-        animation: leg 0.6s steps(2) infinite;
-      }
-      .trex .leg.right {
-        animation-delay: 0.3s;
-      }
-      @keyframes leg {
-        0% {
-          transform: rotate(12deg);
-        }
-        50% {
-          transform: rotate(-18deg);
-        }
-        100% {
-          transform: rotate(12deg);
-        }
-      }
-
-      /* Pterodáctilo volando */
-      .ptero {
-        position: absolute;
-        left: 5%;
-        top: 4%;
-        width: 180px;
-        animation: fly 10s linear infinite;
-      }
-      @keyframes fly {
-        0% {
-          transform: translateY(0) translateX(-10vw) rotate(-10deg);
-        }
-        25% {
-          transform: translateY(-30px) translateX(10vw) rotate(0deg);
-        }
-        50% {
-          transform: translateY(0) translateX(40vw) rotate(10deg);
-        }
-        75% {
-          transform: translateY(-20px) translateX(10vw) rotate(0deg);
-        }
-        100% {
-          transform: translateY(0) translateX(-10vw) rotate(-10deg);
-        }
-      }
-
-      /* Cards */
-      .panel {
-        position: absolute;
-        right: 36px;
-        top: 90px;
-        width: 360px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.03),
-          rgba(255, 255, 255, 0.02)
-        );
-        border-radius: 12px;
-        padding: 18px;
-        backdrop-filter: blur(6px);
-        box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
-      }
-      .panel h2 {
-        margin: 0 0 8px;
-        font-size: 18px;
-      }
-      .facts {
-        display: grid;
-        gap: 10px;
-      }
-      .fact {
-        background: var(--glass);
-        padding: 10px;
+      .question {
+        background: white;
+        padding: 15px;
+        margin-bottom: 15px;
         border-radius: 10px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        transition: transform 0.25s ease, box-shadow 0.25s;
       }
-      .fact:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 8px 24px rgba(2, 6, 23, 0.4);
+      .result {
+        margin-top: 10px;
+        font-weight: bold;
       }
-      .fact .emoji {
-        font-size: 22px;
+      .correct {
+        color: green;
       }
-
-      footer {
-        position: absolute;
-        left: 18px;
-        bottom: 18px;
-        color: var(--muted);
-        font-size: 13px;
+      .incorrect {
+        color: red;
       }
-
-      /* Info modal bubble */
-      .bubble {
-        position: absolute;
-        left: 50%;
-        top: 24px;
-        transform: translateX(-50%);
-        background: linear-gradient(180deg, #0b2230, #06121a);
-        padding: 14px;
-        border-radius: 10px;
-        color: #bde3ff;
-        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.7);
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .bubble small {
-        color: var(--muted);
-      }
-
-      /* Responsive */
-      @media (max-width: 900px) {
-        .panel {
-          position: static;
-          width: auto;
-          margin: 16px;
-          border-radius: 10px;
-        }
-        .dinos {
-          gap: 18px;
-        }
-        .hero {
-          padding-bottom: 80px;
-        }
+      button {
+        display: block;
+        margin: 5px 0;
       }
     </style>
   </head>
   <body>
-    <div class="stage">
-      <div class="stars"></div>
-      <div class="meteor">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M3 3l10 10"
-            stroke="#ffd47a"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <path
-            d="M20 4L10 14"
-            stroke="#ffb703"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
-      </div>
-
-      <header>
-        <div class="logo">
-          <div class="mark">D</div>
-          <div>
-            <h1>Dinosaurios Épicos</h1>
-            <p class="lead">Animaciones CSS & SVG — interactiva y chula</p>
-          </div>
-        </div>
-        <div style="flex: 1"></div>
-        <nav style="display: flex; gap: 8px; align-items: center">
-          <button
-            id="toggleDay"
-            style="
-              background: transparent;
-              border: 1px solid rgba(255, 255, 255, 0.06);
-              color: var(--muted);
-              padding: 8px 12px;
-              border-radius: 8px;
-              cursor: pointer;
-            "
-          >
-            Cambiar tema
-          </button>
-        </nav>
-      </header>
-
-      <main class="hero">
-        <div class="ptero" aria-hidden>
-          <svg
-            viewBox="0 0 200 120"
-            width="100%"
-            height="100%"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g fill="#c2e6ff" stroke="#0b394d">
-              <path
-                d="M10 60 Q50 10 90 60 T170 60 Q140 40 115 60 T10 60"
-                opacity="0.95"
-              />
-              <circle cx="80" cy="50" r="6" fill="#09202a" />
-            </g>
-          </svg>
-        </div>
-
-        <div class="dinos">
-          <div class="dino trex" title="T-Rex">
-            <svg
-              viewBox="0 0 220 140"
-              width="100%"
-              height="100%"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                <linearGradient id="g1" x1="0" x2="1">
-                  <stop offset="0" stop-color="#64b6ff" />
-                  <stop offset="1" stop-color="#0b7fb0" />
-                </linearGradient>
-              </defs>
-              <g transform="translate(10,10)">
-                <ellipse
-                  cx="70"
-                  cy="70"
-                  rx="50"
-                  ry="40"
-                  fill="url(#g1)"
-                  stroke="#062b3a"
-                  stroke-width="3"
-                />
-                <circle cx="20" cy="55" r="12" fill="#0b394d" />
-                <rect
-                  x="100"
-                  y="48"
-                  width="40"
-                  height="18"
-                  rx="8"
-                  fill="#0b394d"
-                  transform="rotate(-15 120 57)"
-                />
-                <g class="leg left">
-                  <rect
-                    x="40"
-                    y="95"
-                    width="14"
-                    height="28"
-                    rx="6"
-                    fill="#06303a"
-                  />
-                </g>
-                <g class="leg right">
-                  <rect
-                    x="72"
-                    y="95"
-                    width="14"
-                    height="28"
-                    rx="6"
-                    fill="#06303a"
-                  />
-                </g>
-                <path
-                  d="M40 60 Q60 40 90 50"
-                  stroke="#082b34"
-                  stroke-width="4"
-                  fill="none"
-                  stroke-linecap="round"
-                />
-                <circle cx="100" cy="38" r="6" fill="#081f24" />
-              </g>
-            </svg>
-          </div>
-
-          <div class="dino" title="Triceratops">
-            <svg
-              viewBox="0 0 220 140"
-              width="100%"
-              height="100%"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="translate(10,10)">
-                <ellipse
-                  cx="70"
-                  cy="70"
-                  rx="60"
-                  ry="40"
-                  fill="#ffd6a5"
-                  stroke="#7a3f22"
-                  stroke-width="3"
-                />
-                <circle cx="120" cy="60" r="16" fill="#7a3f22" />
-                <path
-                  d="M30 60 Q60 30 90 60"
-                  fill="#ffd6a5"
-                  stroke="#7a3f22"
-                  stroke-width="3"
-                />
-                <rect
-                  x="50"
-                  y="95"
-                  width="14"
-                  height="28"
-                  rx="6"
-                  fill="#7a3f22"
-                />
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        <div class="ground"></div>
-        <div class="hills"></div>
-
-        <aside class="panel">
-          <h2>Explora los dinosaurios</h2>
-          <div class="facts">
-            <div class="fact" onclick="showFact('trex')">
-              <div class="emoji">🦖</div>
-              <div>
-                <strong>T-Rex</strong>
-                <div style="font-size: 12px; color: var(--muted)">
-                  El rey de los depredadores
-                </div>
-              </div>
-            </div>
-            <div class="fact" onclick="showFact('trice')">
-              <div class="emoji">🦕</div>
-              <div>
-                <strong>Triceratops</strong>
-                <div style="font-size: 12px; color: var(--muted)">
-                  Fuerte con cuernos
-                </div>
-              </div>
-            </div>
-            <div class="fact" onclick="showFact('ptero')">
-              <div class="emoji">🪽</div>
-              <div>
-                <strong>Pterodáctilo</strong>
-                <div style="font-size: 12px; color: var(--muted)">
-                  Volador antiguo
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <div class="bubble" id="bubble" style="display: none">
-          <div id="bubbleEmoji" style="font-size: 24px">🦖</div>
-          <div>
-            <strong id="bubbleTitle">T-Rex</strong><br /><small id="bubbleText"
-              >El T-Rex era un carnívoro formidable.</small
-            >
-          </div>
-        </div>
-
-        <footer>
-          Click en una tarjeta para ver un dato — Hecho con HTML, CSS y SVG
-        </footer>
-      </main>
-    </div>
+    <h1>EXAMEN COMPLETO INTERACTIVO</h1>
+    <div id="quiz"></div>
 
     <script>
-      const bubble = document.getElementById("bubble");
-      const bubbleEmoji = document.getElementById("bubbleEmoji");
-      const bubbleTitle = document.getElementById("bubbleTitle");
-      const bubbleText = document.getElementById("bubbleText");
-
-      function showFact(id) {
-        if (id === "trex") {
-          bubbleEmoji.textContent = "🦖";
-          bubbleTitle.textContent = "Tyrannosaurus Rex";
-          bubbleText.textContent =
-            "Un depredador bípedo que vivió hace ~68-66 millones de años.";
-        } else if (id === "trice") {
-          bubbleEmoji.textContent = "🦕";
-          bubbleTitle.textContent = "Triceratops";
-          bubbleText.textContent =
-            "Herbívoro con un gran volante óseo y tres cuernos impresionantes.";
-        } else {
-          bubbleEmoji.textContent = "🪽";
-          bubbleTitle.textContent = "Pterodáctilo";
-          bubbleText.textContent =
-            "No son dinosaurios estrictamente, pero voladores icónicos del Mesozoico.";
-        }
-        bubble.style.display = "flex";
-        bubble.style.animation = "pop .45s ease forwards";
-        setTimeout(() => (bubble.style.display = "none"), 4000);
+      function shuffle(a) {
+        return a.sort(() => Math.random() - 0.5);
       }
 
-      // small pop animation added dynamically
-      const s = document.createElement("style");
-      s.innerHTML =
-        "@keyframes pop{0%{transform:translateY(-10px) scale(.98);opacity:0}60%{transform:translateY(0) scale(1.02);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}";
-      document.head.appendChild(s);
+      let preguntas = [
+        {
+          t: `¿Qué nombre recibe el movimiento de bucle aparentemente errático que dibujan los planetas respecto a las estrellas fijas?`,
+          o: [
+            `Precesión.`,
+            `Retrogradación.`,
+            `Traslación elíptica.`,
+            `Nutación.`,
+          ],
+          c: `Retrogradación.`,
+        },
+        {
+          t: `La "Hipópede", ideada por Eudoxo para resolver la retrogradación, es una curva con forma de:`,
+          o: [
+            `Círculo perfecto.`,
+            `Elipse achatada.`,
+            `Forma de "ocho".`,
+            `Espiral infinita.`,
+          ],
+          c: `Forma de "ocho".`,
+        },
+        {
+          t: `En el modelo de Ptolomeo, el pequeño círculo sobre el que se desplaza el planeta se llama:`,
+          o: [`Deferente.`, `Ecuador.`, `Epiciclo.`, `Órbita mayor.`],
+          c: `Epiciclo.`,
+        },
+        {
+          t: `¿Qué es el "Deferente" en el sistema ptolemaico?`,
+          o: [
+            `El punto donde el planeta se detiene.`,
+            `El círculo mayor sobre el que se mueve el centro del epiciclo.`,
+            `La distancia entre la Tierra y la Luna.`,
+            `El eje de rotación terrestre.`,
+          ],
+          c: `El círculo mayor sobre el que se mueve el centro del epiciclo.`,
+        },
+        {
+          t: `El "Heliocentrismo", modelo que sitúa al Sol en el centro, fue propuesto inicialmente en la antigüedad por:`,
+          o: [
+            `Ptolomeo.`,
+            `Aristarco de Samos.`,
+            `Eratóstenes.`,
+            `Anaximandro.`,
+          ],
+          c: `Aristarco de Samos.`,
+        },
+        {
+          t: `¿Qué establecieron las "Leyes de Kepler" respecto a las órbitas planetarias?`,
+          o: [
+            `Que son círculos perfectos.`,
+            `Que son elipses, rompiendo el ideal circular antiguo.`,
+            `Que los planetas no se mueven.`,
+            `Que las órbitas son irregulares y sin leyes.`,
+          ],
+          c: `Que son elipses, rompiendo el ideal circular antiguo.`,
+        },
+        {
+          t: `El "Principio de Inercia" de la física moderna establece que un objeto mantiene su estado de movimiento o reposo a menos que:`,
+          o: [
+            `Pase el tiempo suficiente.`,
+            `Actúe una fuerza externa sobre él.`,
+            `Entre en la región supralunar.`,
+            `Alcance su lugar natural.`,
+          ],
+          c: `Actúe una fuerza externa sobre él.`,
+        },
+        {
+          t: `El "Principio de Relatividad" afirma que:`,
+          o: [
+            `Todo conocimiento es subjetivo.`,
+            `Las leyes físicas cambian según el observador.`,
+            `No hay experimento que distinga entre reposo y movimiento rectilíneo uniforme.`,
+            `La velocidad de la luz es variable.`,
+          ],
+          c: `No hay experimento que distinga entre reposo y movimiento rectilíneo uniforme.`,
+        },
+        {
+          t: `El paso del "Mito al Logos" se sitúa históricamente en el siglo:`,
+          o: [`I d.C.`, `VI a.C.`, `XV d.C.`, `IV a.C.`],
+          c: `VI a.C.`,
+        },
+        {
+          t: `¿Cómo definió Anaximandro el "Ápeiron"?`,
+          o: [
+            `Como el agua primordial.`,
+            `Como el átomo indivisible.`,
+            `Como algo "indefinido" o "ilimitado".`,
+            `Como el aire que respiramos.`,
+          ],
+          c: `Como algo "indefinido" o "ilimitado".`,
+        },
 
-      // Theme toggle
-      const toggle = document.getElementById("toggleDay");
-      toggle.addEventListener("click", () => {
-        document.documentElement.style.setProperty(
-          "--bg1",
-          document.documentElement.style.getPropertyValue("--bg1") === "#f7f9fc"
-            ? "#0f1724"
-            : "#f7f9fc"
-        );
-        document.documentElement.style.setProperty(
-          "--bg2",
-          document.documentElement.style.getPropertyValue("--bg2") === "#ffffff"
-            ? "#071029"
-            : "#ffffff"
-        );
-        document.documentElement.style.setProperty(
-          "--muted",
-          document.documentElement.style.getPropertyValue("--muted") ===
-            "#1f2937"
-            ? "#9fb4c9"
-            : "#1f2937"
-        );
-      });
+        {
+          t: `Según Aristóteles, el "Éter" es un elemento de naturaleza:`,
+          o: [
+            `Corruptible y pesada.`,
+            `Divina, perfecta e inalterable.`,
+            `Gaseosa y volátil.`,
+            `Imaginaria y sin masa.`,
+          ],
+          c: `Divina, perfecta e inalterable.`,
+        },
+        {
+          t: `La "Región Sublunar" en la división aristotélica es el lugar de:`,
+          o: [
+            `La eternidad y la perfección.`,
+            `El cambio, la generación y la corrupción.`,
+            `El movimiento circular uniforme.`,
+            `La luz pura y el éter.`,
+          ],
+          c: `El cambio, la generación y la corrupción.`,
+        },
+        {
+          t: `La "Teleología" o concepción finalista sostiene que las sustancias:`,
+          o: [
+            `Se mueven por azar ciego.`,
+            `Tienden a ocupar su lugar natural o cumplir una finalidad.`,
+            `Son máquinas sin propósito.`,
+            `No existen realmente.`,
+          ],
+          c: `Tienden a ocupar su lugar natural o cumplir una finalidad.`,
+        },
+        {
+          t: `El "Antropocentrismo" es la perspectiva que sitúa:`,
+          o: [
+            `Al Sol en el centro del sistema.`,
+            `Al ser humano como un observador privilegiado.`,
+            `A Dios como único motor del universo.`,
+            `Al azar como explicación de la vida.`,
+          ],
+          c: `Al ser humano como un observador privilegiado.`,
+        },
+        {
+          t: `La visión de Descartes que entiende el universo como máquinas con partes que se transmiten movimiento por contacto es el:`,
+          o: [`Vitalismo.`, `Mecanicismo.`, `Animismo.`, `Existencialismo.`],
+          c: `Mecanicismo.`,
+        },
+        {
+          t: `Según Descartes, la masa y la extensión son "Propiedades Primarias" porque son:`,
+          o: [
+            `Dependientes del sujeto.`,
+            `Objetivas y matematizables.`,
+            `Basadas en el color y el sabor.`,
+            `Imposibles de medir.`,
+          ],
+          c: `Objetivas y matematizables.`,
+        },
+        {
+          t: `Las "Propiedades Secundarias", como el color o el sabor, se caracterizan por:`,
+          o: [
+            `Ser inherentes a la materia.`,
+            `Ser universales para todos los objetos.`,
+            `Depender del sujeto que las percibe.`,
+            `Ser la base de la física moderna.`,
+          ],
+          c: `Depender del sujeto que las percibe.`,
+        },
+        {
+          t: `¿Qué astrónomo utilizó la trigonometría para intentar medir las distancias del Sol y la Luna?`,
+          o: [`Eratóstenes.`, `Aristarco de Samos.`, `Copérnico.`, `Brahe.`],
+          c: `Aristarco de Samos.`,
+        },
+        {
+          t: `Eratóstenes es reconocido por calcular con gran precisión:`,
+          o: [
+            `La masa de Júpiter.`,
+            `La circunferencia de la Tierra.`,
+            `La distancia a las estrellas fijas.`,
+            `La velocidad del sonido.`,
+          ],
+          c: `La circunferencia de la Tierra.`,
+        },
+        {
+          t: `El modelo de Tycho Brahe propone que:`,
+          o: [
+            `La Tierra gira alrededor del Sol.`,
+            `El Sol gira alrededor de la Tierra y los planetas alrededor del Sol.`,
+            `El universo es un gran átomo.`,
+            `Todos los planetas son independientes.`,
+          ],
+          c: `El Sol gira alrededor de la Tierra y los planetas alrededor del Sol.`,
+        },
 
-      // Make sure animations are smooth when tab hidden/visible
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) {
-          document.body.style.animationPlayState = "paused";
-        } else {
-          document.body.style.animationPlayState = "running";
-        }
+        {
+          t: `Giordano Bruno defendió la idea de:`,
+          o: [
+            `Un universo finito y cerrado.`,
+            `La infinitud del universo y múltiples sistemas solares.`,
+            `Que la Tierra es el centro absoluto.`,
+            `Que los planetas son dioses.`,
+          ],
+          c: `La infinitud del universo y múltiples sistemas solares.`,
+        },
+        {
+          t: `David Hilbert convocó un congreso en París en 1900 para:`,
+          o: [
+            `Prohibir la investigación científica.`,
+            `Elaborar un sistema axiomático completo para la razón humana.`,
+            `Celebrar el descubrimiento de la penicilina.`,
+            `Unificar las religiones del mundo.`,
+          ],
+          c: `Elaborar un sistema axiomático completo para la razón humana.`,
+        },
+        {
+          t: `La "Metafísica" se define como:`,
+          o: [
+            `El estudio de las leyes del movimiento.`,
+            `El estudio global de la realidad en toda su dimensión.`,
+            `El análisis de la gramática.`,
+            `La observación de las células.`,
+          ],
+          c: `El estudio global de la realidad en toda su dimensión.`,
+        },
+        {
+          t: `La rama que estudia los fundamentos y métodos del conocimiento científico es la:`,
+          o: [`Estética.`, `Epistemología.`, `Retórica.`, `Metafísica.`],
+          c: `Epistemología.`,
+        },
+        {
+          t: `La "Estética" es la disciplina filosófica que estudia:`,
+          o: [
+            `La moralidad de los actos.`,
+            `La belleza y los fundamentos del arte.`,
+            `El movimiento de los cuerpos.`,
+            `El origen del lenguaje.`,
+          ],
+          c: `La belleza y los fundamentos del arte.`,
+        },
+        {
+          t: `La "Retórica" se define como:`,
+          o: [
+            `El estudio de la verdad absoluta.`,
+            `El arte de expresarse correctamente para persuadir.`,
+            `La medición de los astros.`,
+            `La lógica matemática pura.`,
+          ],
+          c: `El arte de expresarse correctamente para persuadir.`,
+        },
+        {
+          t: `El "Arjé" (αρχη) para Tales de Mileto era:`,
+          o: [`El aire.`, `El agua.`, `El átomo.`, `El fuego.`],
+          c: `El agua.`,
+        },
+        {
+          t: `Para Demócrito, el "Arjé" o principio primero era:`,
+          o: [`El ápeiron.`, `El agua.`, `El átomo.`, `La tierra.`],
+          c: `El átomo.`,
+        },
+        {
+          t: `Según Aristóteles, el principio de causalidad dice que "todo lo que está en movimiento...":`,
+          o: [
+            `Se mueve por sí solo.`,
+            `Es movido por otro.`,
+            `No tiene causa racional.`,
+            `Tiende a la quietud eterna.`,
+          ],
+          c: `Es movido por otro.`,
+        },
+        {
+          t: `El concepto de "Falsación" es la clave de la metodología científica de:`,
+          o: [
+            `Isaac Newton.`,
+            `Karl Popper.`,
+            `Galileo Galilei.`,
+            `René Descartes.`,
+          ],
+          c: `Karl Popper.`,
+        },
+
+        {
+          t: `La "Cosmología" es la visión de conjunto de la totalidad del cosmos donde los elementos están:`,
+          o: [
+            `Desordenados y al azar.`,
+            `Sistemáticamente ordenados.`,
+            `Creados por mitos.`,
+            `Ocultos a la razón.`,
+          ],
+          c: `Sistemáticamente ordenados.`,
+        },
+        {
+          t: `La "Filosofía" se define como el conjunto de saberes que busca establecer los principios más generales para organizar:`,
+          o: [
+            `La economía de un país.`,
+            `El conocimiento de la realidad y el sentido del obrar humano.`,
+            `La estructura de los edificios antiguos.`,
+            `La clasificación de los animales.`,
+          ],
+          c: `El conocimiento de la realidad y el sentido del obrar humano.`,
+        },
+        {
+          t: `La "Ciencia" se diferencia de otros saberes por deducir leyes generales con:`,
+          o: [
+            `Capacidad de convencer por la fuerza.`,
+            `Capacidad predictiva y comprobación experimental.`,
+            `Historias basadas en dioses.`,
+            `Intuiciones personales subjetivas.`,
+          ],
+          c: `Capacidad predictiva y comprobación experimental.`,
+        },
+        {
+          t: `La disciplina que investiga el conocimiento y la práctica científica es la:`,
+          o: [
+            `Sociología.`,
+            `Filosofía de la Ciencia.`,
+            `Astronomía.`,
+            `Astrología.`,
+          ],
+          c: `Filosofía de la Ciencia.`,
+        },
+        {
+          t: `Un "Paradigma" se entiende comúnmente en ciencia como:`,
+          o: [
+            `Un error de cálculo recurrente.`,
+            `Un marco de referencia o modelo aceptado por la comunidad científica.`,
+            `Un instrumento para ver las estrellas.`,
+            `Una ley que nunca cambia.`,
+          ],
+          c: `Un marco de referencia o modelo aceptado por la comunidad científica.`,
+        },
+        {
+          t: `¿Cuál es el nombre de la gran obra de Ptolomeo?`,
+          o: [
+            `De revolutionibus.`,
+            `El Almagesto.`,
+            `La Nueva Astronomía.`,
+            `El Mensajero Sideral.`,
+          ],
+          c: `El Almagesto.`,
+        },
+        {
+          t: `El "Astrolabio" es un instrumento utilizado para:`,
+          o: [
+            `Pesar metales preciosos.`,
+            `Observar y calcular la posición de los astros.`,
+            `Medir la presión atmosférica.`,
+            `Curar enfermedades.`,
+          ],
+          c: `Observar y calcular la posición de los astros.`,
+        },
+        {
+          t: `Si algo es "Ininteligible", significa que:`,
+          o: [
+            `Es fácil de ver con un microscopio.`,
+            `No puede ser comprendido por la razón humana.`,
+            `Es un concepto matemático puro.`,
+            `Es algo muy antiguo.`,
+          ],
+          c: `No puede ser comprendido por la razón humana.`,
+        },
+        {
+          t: `Galileo Galilei es relevante por confirmar el heliocentrismo y establecer los principios de:`,
+          o: [
+            `Gravedad y masa.`,
+            `Inercia y relatividad.`,
+            `Teleología y éter.`,
+            `Retórica y estética.`,
+          ],
+          c: `Inercia y relatividad.`,
+        },
+        {
+          t: `Isaac Newton culminó la revolución científica al demostrar que todos los cuerpos son el origen de:`,
+          o: [
+            `El éter.`,
+            `La fuerza de gravedad.`,
+            `La ininteligibilidad.`,
+            `El movimiento circular perfecto.`,
+          ],
+          c: `La fuerza de gravedad.`,
+        },
+      ];
+
+      preguntas = shuffle(preguntas);
+
+      const quiz = document.getElementById("quiz");
+
+      preguntas.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.className = "question";
+
+        const titulo = document.createElement("p");
+        titulo.textContent = i + 1 + ". " + p.t;
+        div.appendChild(titulo);
+
+        const res = document.createElement("div");
+
+        shuffle(p.o).forEach((op) => {
+          const btn = document.createElement("button");
+          btn.textContent = op;
+          btn.onclick = () => {
+            res.textContent = op === p.c ? "✔ Correcto" : "✘ Incorrecto";
+            res.className = "result " + (op === p.c ? "correct" : "incorrect");
+          };
+          div.appendChild(btn);
+        });
+
+        div.appendChild(res);
+        quiz.appendChild(div);
       });
     </script>
   </body>
